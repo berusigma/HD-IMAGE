@@ -3,249 +3,929 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HD Photo Processor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>HD Foto Enhancer — Perjelas Fotomu Instan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         :root {
-            --bg: #f0f4f8;
-            --card-bg: #ffffff;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --text-main: #334155;
-            --text-muted: #64748b;
-            --success: #22c55e;
-            --border: #e2e8f0;
+            --bg: #f0f6ff;
+            --white: #ffffff;
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-200: #bfdbfe;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --sky: #0ea5e9;
+            --indigo: #6366f1;
+            --text-dark: #1e293b;
+            --text-mid: #475569;
+            --text-light: #94a3b8;
+            --green: #22c55e;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --shadow-sm: 0 1px 3px rgba(59,130,246,.08), 0 1px 2px rgba(0,0,0,.04);
+            --shadow-md: 0 4px 20px rgba(59,130,246,.10), 0 2px 8px rgba(0,0,0,.06);
+            --shadow-lg: 0 10px 40px rgba(59,130,246,.15), 0 4px 16px rgba(0,0,0,.08);
+            --radius: 20px;
+            --radius-sm: 12px;
         }
+
+        html { scroll-behavior: smooth; }
 
         body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg);
-            color: var(--text-main);
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: var(--text-dark);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .container {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 450px;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        /* ──── BACKGROUND DECORATION ──── */
+        .bg-blobs {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: .45;
+            animation: floatBlob 12s ease-in-out infinite alternate;
+        }
+        .blob-1 { width: 480px; height: 480px; background: #bfdbfe; top: -100px; left: -120px; animation-delay: 0s; }
+        .blob-2 { width: 380px; height: 380px; background: #c7d2fe; top: 40%; right: -100px; animation-delay: -4s; }
+        .blob-3 { width: 300px; height: 300px; background: #bae6fd; bottom: -80px; left: 30%; animation-delay: -8s; }
+        @keyframes floatBlob {
+            0% { transform: translate(0,0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        /* Dots grid pattern */
+        .bg-dots {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: radial-gradient(circle, #93c5fd 1px, transparent 1px);
+            background-size: 32px 32px;
+            opacity: .3;
+        }
+
+        /* ──── PAGE WRAPPER ──── */
+        .page-wrap {
+            position: relative; z-index: 1;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 24px 16px 60px;
+        }
+
+        /* ──── HEADER ──── */
+        .site-header {
+            width: 100%; max-width: 580px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 32px;
+        }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.3rem;
+            color: var(--blue-600); letter-spacing: -.5px;
+        }
+        .logo-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--blue-500), var(--indigo));
+            display: grid; place-items: center;
+            box-shadow: 0 4px 12px rgba(99,102,241,.3);
+        }
+        .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+        .badge-pill {
+            background: var(--blue-100); color: var(--blue-600);
+            font-size: .72rem; font-weight: 700; letter-spacing: .5px;
+            padding: 5px 12px; border-radius: 99px;
+            border: 1.5px solid var(--blue-200);
+        }
+
+        /* ──── HERO SECTION ──── */
+        .hero {
+            width: 100%; max-width: 580px;
+            text-align: center; margin-bottom: 28px;
+        }
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--white); border: 1.5px solid var(--blue-200);
+            border-radius: 99px; padding: 6px 14px; font-size: .8rem;
+            font-weight: 600; color: var(--blue-600); margin-bottom: 18px;
+            box-shadow: var(--shadow-sm);
+            animation: fadeDown .6s ease both;
+        }
+        .hero-tag span { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+        @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        .hero h1 {
+            font-family: 'Nunito', sans-serif; font-weight: 900;
+            font-size: clamp(1.9rem, 6vw, 2.8rem); line-height: 1.15;
+            color: var(--text-dark); margin-bottom: 14px;
+            animation: fadeDown .7s .1s ease both;
+        }
+        .hero h1 .accent {
+            background: linear-gradient(135deg, var(--blue-500), var(--indigo));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: .95rem; color: var(--text-mid); line-height: 1.7;
+            max-width: 460px; margin: 0 auto;
+            animation: fadeDown .7s .2s ease both;
+        }
+
+        /* ──── STATS STRIP ──── */
+        .stats-strip {
+            width: 100%; max-width: 580px;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 12px; margin-bottom: 24px;
+            animation: fadeUp .7s .3s ease both;
+        }
+        .stat-card {
+            background: var(--white); border-radius: var(--radius-sm);
+            padding: 14px 10px; text-align: center;
+            border: 1.5px solid var(--blue-100);
+            box-shadow: var(--shadow-sm);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .stat-num {
+            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.35rem;
+            background: linear-gradient(135deg, var(--blue-500), var(--indigo));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: .72rem; font-weight: 600; color: var(--text-light); margin-top: 2px; }
+
+        /* ──── MAIN CARD ──── */
+        .main-card {
+            width: 100%; max-width: 580px;
+            background: var(--white); border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            border: 1.5px solid var(--blue-100);
+            overflow: hidden;
+            animation: fadeUp .7s .35s ease both;
+        }
+
+        .card-head {
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--indigo) 100%);
+            padding: 22px 28px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .card-head-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: rgba(255,255,255,.2); display: grid; place-items: center;
+            flex-shrink: 0;
+        }
+        .card-head-icon svg { width: 26px; height: 26px; fill: #fff; }
+        .card-head-text h2 {
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.15rem;
+            color: #fff; margin-bottom: 3px;
+        }
+        .card-head-text p { font-size: .82rem; color: rgba(255,255,255,.75); }
+
+        .card-body { padding: 28px; }
+
+        /* ──── LOCK SCREEN ──── */
+        #lock-screen {}
+        .lock-visual {
+            background: linear-gradient(135deg, var(--blue-50), #f0f0ff);
+            border: 2px dashed var(--blue-200);
+            border-radius: var(--radius-sm);
+            padding: 28px 20px; text-align: center; margin-bottom: 22px;
+        }
+        .lock-icon-wrap {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-500), var(--indigo));
+            display: grid; place-items: center; margin: 0 auto 16px;
+            box-shadow: 0 6px 20px rgba(99,102,241,.35);
+        }
+        .lock-icon-wrap svg { width: 34px; height: 34px; fill: #fff; }
+        .lock-visual h3 {
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.2rem;
+            color: var(--text-dark); margin-bottom: 8px;
+        }
+        .lock-visual p { font-size: .88rem; color: var(--text-mid); line-height: 1.6; }
+
+        .steps-list {
+            display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;
+        }
+        .step-item {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--blue-50); border-radius: var(--radius-sm);
+            padding: 12px 16px; border: 1.5px solid var(--blue-100);
+        }
+        .step-num {
+            width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--blue-500), var(--indigo));
+            color: #fff; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .85rem;
+            display: grid; place-items: center;
+        }
+        .step-text { font-size: .87rem; color: var(--text-mid); font-weight: 500; }
+        .step-text strong { color: var(--text-dark); }
+
+        .wa-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff; border: none; border-radius: var(--radius-sm);
+            padding: 16px 20px; font-family: 'Nunito', sans-serif; font-weight: 800;
+            font-size: 1rem; cursor: pointer; text-decoration: none; width: 100%;
+            transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 6px 20px rgba(34,197,94,.3);
+            letter-spacing: .3px;
+        }
+        .wa-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(34,197,94,.4); }
+        .wa-btn:active { transform: scale(.98); }
+        .wa-btn svg { width: 22px; height: 22px; fill: #fff; }
+
+        .privacy-note {
+            display: flex; align-items: center; gap: 6px; justify-content: center;
+            font-size: .77rem; color: var(--text-light); margin-top: 12px;
+        }
+        .privacy-note svg { width: 14px; height: 14px; fill: var(--text-light); }
+
+        /* ──── WORKSPACE ──── */
+        #workspace { display: none; }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2.5px dashed var(--blue-200); border-radius: var(--radius-sm);
+            padding: 32px 20px; text-align: center; cursor: pointer;
+            transition: all .25s ease; background: var(--blue-50);
+            margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            background: var(--blue-100); border-color: var(--blue-500);
+        }
+        .upload-zone input { display: none; }
+        .upload-icon {
+            width: 60px; height: 60px; border-radius: 16px;
+            background: linear-gradient(135deg, var(--blue-100), var(--blue-200));
+            display: grid; place-items: center; margin: 0 auto 14px;
+            transition: transform .2s;
+        }
+        .upload-zone:hover .upload-icon { transform: scale(1.1); }
+        .upload-icon svg { width: 28px; height: 28px; fill: var(--blue-500); }
+        .upload-title {
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem;
+            color: var(--text-dark); margin-bottom: 6px;
+        }
+        .upload-sub { font-size: .82rem; color: var(--text-light); }
+        .upload-formats {
+            display: flex; gap: 6px; justify-content: center; margin-top: 14px; flex-wrap: wrap;
+        }
+        .fmt-badge {
+            background: var(--white); border: 1.5px solid var(--blue-200);
+            border-radius: 99px; padding: 3px 10px; font-size: .7rem;
+            font-weight: 700; color: var(--blue-600); letter-spacing: .3px;
+        }
+
+        /* Preview strip */
+        .preview-strip {
+            display: none; align-items: center; gap: 12px;
+            background: var(--blue-50); border: 1.5px solid var(--blue-200);
+            border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 20px;
+        }
+        .preview-thumb {
+            width: 52px; height: 52px; border-radius: 10px;
+            object-fit: cover; border: 2px solid var(--blue-200); flex-shrink: 0;
+        }
+        .preview-info { flex: 1; min-width: 0; }
+        .preview-name {
+            font-size: .85rem; font-weight: 700; color: var(--text-dark);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .preview-size { font-size: .75rem; color: var(--text-light); margin-top: 2px; }
+        .preview-chg {
+            font-size: .75rem; font-weight: 600; color: var(--blue-500); cursor: pointer;
+            white-space: nowrap;
+        }
+        .preview-chg:hover { color: var(--blue-700); }
+
+        /* Feature tags */
+        .feature-tags {
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+        }
+        .feat-tag {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--blue-50); border: 1.5px solid var(--blue-200);
+            border-radius: 99px; padding: 6px 12px;
+            font-size: .78rem; font-weight: 600; color: var(--blue-600);
+        }
+        .feat-tag svg { width: 13px; height: 13px; fill: var(--blue-500); }
+
+        /* Process button */
+        .process-btn {
+            width: 100%; padding: 18px 20px;
+            background: linear-gradient(135deg, var(--blue-500), var(--indigo));
+            color: #fff; border: none; border-radius: var(--radius-sm);
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.05rem;
+            cursor: pointer; transition: transform .2s, box-shadow .2s, opacity .2s;
+            box-shadow: 0 6px 20px rgba(59,130,246,.35); letter-spacing: .3px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .process-btn:hover:not(:disabled) {
+            transform: translateY(-2px); box-shadow: 0 10px 28px rgba(59,130,246,.45);
+        }
+        .process-btn:active:not(:disabled) { transform: scale(.98); }
+        .process-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+        .process-btn svg { width: 20px; height: 20px; fill: #fff; }
+
+        /* Cooldown */
+        .cooldown-bar {
+            display: none; margin-top: 14px;
+            background: var(--blue-50); border: 1.5px solid var(--blue-200);
+            border-radius: var(--radius-sm); padding: 14px 16px;
+        }
+        .cooldown-top {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+        }
+        .cooldown-label { font-size: .83rem; font-weight: 600; color: var(--text-mid); display: flex; align-items: center; gap: 6px; }
+        .cooldown-label svg { width: 15px; height: 15px; fill: var(--yellow); }
+        .cooldown-timer {
+            font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.05rem;
+            color: var(--blue-600); letter-spacing: 1px;
+        }
+        .cooldown-track {
+            height: 6px; background: var(--blue-100); border-radius: 99px; overflow: hidden;
+        }
+        .cooldown-fill {
+            height: 100%; border-radius: 99px;
+            background: linear-gradient(90deg, var(--blue-400), var(--indigo));
+            transition: width 1s linear;
+        }
+
+        /* Loader */
+        .loader-wrap {
+            display: none; margin-top: 20px;
+            background: var(--blue-50); border: 1.5px solid var(--blue-200);
+            border-radius: var(--radius-sm); padding: 22px;
             text-align: center;
         }
-
-        h1 { font-size: 1.5rem; color: #1e293b; margin-bottom: 10px; }
-        p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
-
-        .divider { height: 1px; background: var(--border); margin: 25px 0; }
-
-        /* Lock Screen */
-        #lock-screen { padding: 10px 0; }
-        .wa-btn {
-            background: #25D366;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-weight: 600;
-            margin-top: 20px;
-            transition: 0.3s;
+        .loader-spinner {
+            width: 48px; height: 48px; margin: 0 auto 14px;
+            border-radius: 50%;
+            border: 4px solid var(--blue-200);
+            border-top-color: var(--blue-500);
+            animation: spin 1s linear infinite;
         }
-        .wa-btn:hover { background: #20b85a; }
-
-        /* Workspace */
-        #workspace { display: none; }
-        
-        .upload-box {
-            border: 2px dashed var(--border);
-            border-radius: 16px;
-            padding: 40px 20px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 20px;
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text {
+            font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .9rem;
+            color: var(--blue-600); margin-bottom: 4px;
         }
-        .upload-box:hover { border-color: var(--primary); background: #f8fbff; }
-
-        .btn-main {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 12px;
-            width: 100%;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
+        .loader-sub { font-size: .78rem; color: var(--text-light); }
+        .loader-dots span {
+            display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+            background: var(--blue-400); margin: 0 3px;
+            animation: dotBounce .8s ease-in-out infinite;
         }
-        .btn-main:disabled { background: var(--border); cursor: not-allowed; }
+        .loader-dots span:nth-child(2) { animation-delay: .2s; }
+        .loader-dots span:nth-child(3) { animation-delay: .4s; }
+        @keyframes dotBounce { 0%,80%,100%{transform:scale(.8);opacity:.5} 40%{transform:scale(1.3);opacity:1} }
 
-        .cooldown-info {
-            display: none;
-            color: #d97706;
-            background: #fef3c7;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
+        /* Result box */
+        .result-box {
+            display: none; margin-top: 22px;
+            border: 2px solid #bbf7d0; border-radius: var(--radius-sm);
+            background: #f0fdf4; overflow: hidden;
         }
-
-        .result-box { margin-top: 20px; display: none; }
-        .result-box img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
-        
+        .result-head {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            padding: 14px 18px; display: flex; align-items: center; gap: 10px;
+        }
+        .result-head svg { width: 20px; height: 20px; fill: #fff; }
+        .result-head span {
+            font-family: 'Nunito', sans-serif; font-weight: 800; color: #fff; font-size: .95rem;
+        }
+        .result-img-wrap { padding: 16px; }
+        .result-img-wrap img {
+            width: 100%; border-radius: 12px;
+            border: 2px solid #bbf7d0; display: block;
+            box-shadow: 0 4px 16px rgba(34,197,94,.12);
+        }
         .download-btn {
-            display: block;
-            margin-top: 15px;
-            background: var(--success);
-            color: white;
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff; text-decoration: none; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: .95rem; padding: 14px 20px;
+            margin: 0 16px 16px; border-radius: var(--radius-sm);
+            transition: box-shadow .2s, transform .2s;
+            box-shadow: 0 4px 14px rgba(34,197,94,.3);
         }
+        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(34,197,94,.4); }
+        .download-btn svg { width: 18px; height: 18px; fill: #fff; }
 
-        .footer { font-size: 0.75rem; color: var(--text-muted); margin-top: 25px; }
+        /* ──── HOW IT WORKS ──── */
+        .how-section {
+            width: 100%; max-width: 580px;
+            margin-top: 28px;
+            animation: fadeUp .7s .5s ease both;
+        }
+        .section-title {
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem;
+            color: var(--text-mid); text-align: center; letter-spacing: .5px;
+            text-transform: uppercase; margin-bottom: 14px;
+        }
+        .how-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+        }
+        .how-card {
+            background: var(--white); border-radius: var(--radius-sm);
+            padding: 18px 14px; text-align: center;
+            border: 1.5px solid var(--blue-100); box-shadow: var(--shadow-sm);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .how-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        .how-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            background: linear-gradient(135deg, var(--blue-100), var(--blue-200));
+            display: grid; place-items: center; margin: 0 auto 12px;
+        }
+        .how-icon svg { width: 24px; height: 24px; fill: var(--blue-500); }
+        .how-title {
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: .88rem;
+            color: var(--text-dark); margin-bottom: 4px;
+        }
+        .how-desc { font-size: .76rem; color: var(--text-light); line-height: 1.5; }
+
+        /* ──── TESTIMONIAL / TRUST ──── */
+        .trust-section {
+            width: 100%; max-width: 580px;
+            margin-top: 20px;
+            background: var(--white); border-radius: var(--radius);
+            border: 1.5px solid var(--blue-100); padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            animation: fadeUp .7s .6s ease both;
+        }
+        .trust-row {
+            display: flex; gap: 8px; align-items: flex-start;
+        }
+        .trust-avatar {
+            width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+            display: grid; place-items: center; font-weight: 800; font-size: .9rem; color: #fff;
+        }
+        .trust-body { flex: 1; }
+        .trust-name { font-weight: 700; font-size: .88rem; color: var(--text-dark); margin-bottom: 3px; }
+        .trust-quote { font-size: .82rem; color: var(--text-mid); line-height: 1.5; }
+        .stars { color: #f59e0b; font-size: .85rem; letter-spacing: 1px; margin-bottom: 3px; }
+        .trust-divider { height: 1px; background: var(--blue-100); margin: 14px 0; }
+
+        /* ──── FOOTER ──── */
+        .site-footer {
+            width: 100%; max-width: 580px;
+            margin-top: 24px; text-align: center;
+            font-size: .78rem; color: var(--text-light);
+            animation: fadeIn 1s .8s ease both;
+        }
+        .site-footer a { color: var(--blue-500); text-decoration: none; }
+        .footer-pills {
+            display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 10px;
+        }
+        .footer-pill {
+            display: flex; align-items: center; gap: 5px;
+            background: var(--white); border: 1.5px solid var(--blue-100);
+            border-radius: 99px; padding: 4px 12px; font-size: .74rem;
+            font-weight: 600; color: var(--text-mid);
+        }
+        .footer-pill svg { width: 12px; height: 12px; fill: var(--blue-400); }
+
+        /* ──── TOAST ──── */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: var(--text-dark); color: #fff; padding: 12px 20px;
+            border-radius: 99px; font-size: .85rem; font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,.2); z-index: 9999;
+            transition: transform .3s ease; white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 400px) {
+            .how-grid { grid-template-columns: 1fr; }
+            .stats-strip { grid-template-columns: 1fr; }
+            .how-grid { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>HD Photo Processor</h1>
-        <p>Tingkatkan kualitas foto anda dengan satu sentuhan. Bersih, jelas, dan profesional.</p>
-        
-        <div class="divider"></div>
+<div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+</div>
+<div class="bg-dots"></div>
 
-        <!-- Gate Section -->
-        <div id="lock-screen">
-            <p>Untuk menggunakan layanan ini, silakan ikuti saluran informasi kami terlebih dahulu.</p>
-            <a href="https://whatsapp.com/channel/0029Vb89VkwLNSZyIqpdbX3t" target="_blank" class="wa-btn" id="verify-btn">
-                Ikuti Saluran WhatsApp
-            </a>
-        </div>
+<div class="page-wrap">
 
-        <!-- App Section -->
-        <div id="workspace">
-            <label class="upload-box" id="drop-zone">
-                <span id="file-name">Pilih atau Seret Foto</span>
-                <input type="file" id="file-input" style="display:none" accept="image/*">
-            </label>
-
-            <div class="cooldown-info" id="cooldown-alert">
-                Harap tunggu <span id="timer">03:00</span> sebelum memproses foto berikutnya.
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
             </div>
-
-            <button class="btn-main" id="process-btn" disabled>Proses Foto</button>
-
-            <div id="loader" style="margin-top:20px; display:none; color: var(--primary);">Memproses...</div>
-
-            <div class="result-box" id="result-box">
-                <img id="result-img" src="" alt="Result">
-                <a href="" id="download-btn" class="download-btn" target="_blank" download>Unduh Hasil</a>
-            </div>
+            HD Vision
         </div>
+        <div class="badge-pill">✨ GRATIS</div>
+    </header>
 
-        <div class="footer">HD Photo Processor © 2026</div>
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-tag">
+            <span></span>
+            Layanan Aktif — Siap Digunakan
+        </div>
+        <h1>Perjelas Foto<br>dalam <span class="accent">Hitungan Detik</span></h1>
+        <p>Upload foto buram atau resolusi rendah, dan dapatkan hasil yang lebih jernih, tajam, dan detail secara otomatis.</p>
     </div>
 
-    <script>
-        const lockScreen = document.getElementById('lock-screen');
-        const workspace = document.getElementById('workspace');
-        const verifyBtn = document.getElementById('verify-btn');
-        const fileInput = document.getElementById('file-input');
-        const fileName = document.getElementById('file-name');
-        const processBtn = document.getElementById('process-btn');
-        const resultBox = document.getElementById('result-box');
-        const cooldownAlert = document.getElementById('cooldown-alert');
-        const timerDisplay = document.getElementById('timer');
-        const loader = document.getElementById('loader');
+    <!-- STATS -->
+    <div class="stats-strip">
+        <div class="stat-card">
+            <div class="stat-num">4K</div>
+            <div class="stat-label">Output HD</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">~5s</div>
+            <div class="stat-label">Proses Cepat</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Gratis Pakai</div>
+        </div>
+    </div>
 
-        // Gate Logic
-        if (localStorage.getItem('verified') === 'true') {
+    <!-- MAIN CARD -->
+    <div class="main-card">
+        <div class="card-head">
+            <div class="card-head-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-12.5-5.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            </div>
+            <div class="card-head-text">
+                <h2>Enhancer Foto HD</h2>
+                <p>Tingkatkan kualitas foto secara instan</p>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            <!-- LOCK SCREEN -->
+            <div id="lock-screen">
+                <div class="lock-visual">
+                    <div class="lock-icon-wrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    </div>
+                    <h3>Satu Langkah untuk Mulai</h3>
+                    <p>Ikuti channel kami dulu yuk, biar kamu bisa langsung akses fitur ini dan dapat update terbaru!</p>
+                </div>
+
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-num">1</div>
+                        <div class="step-text">Klik tombol <strong>Join Channel</strong> di bawah</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">2</div>
+                        <div class="step-text"><strong>Follow</strong> channel WhatsApp kami</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">3</div>
+                        <div class="step-text">Akses fitur <strong>langsung terbuka</strong> otomatis ✅</div>
+                    </div>
+                </div>
+
+                <a href="https://whatsapp.com/channel/0029Vb89VkwLNSZyIqpdbX3t" target="_blank" class="wa-btn" id="verify-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zM223.9 413.6c-33.6 0-66.5-9-95.2-26.1l-6.8-4-70.8 18.6 18.9-69-4.4-7C45.3 293 33.7 258.9 33.7 223.9 33.7 119.2 119.2 33.7 223.9 33.7c50.7 0 98.4 19.8 134.3 55.6 35.8 35.8 55.6 83.5 55.6 134.4 0 104.7-85.5 190-190 190.1zm104.3-142.6c-5.7-2.9-33.9-16.7-39.1-18.6-5.2-1.9-9-2.9-12.8 2.9-3.8 5.7-14.7 18.6-18 22.4-3.3 3.8-6.6 4.3-12.4 1.4-5.7-2.9-24.2-8.9-46.1-28.5-17.1-15.3-28.7-34.3-32-40-3.3-5.7-.4-8.8 2.5-11.7 2.6-2.6 5.7-6.6 8.5-10 2.9-3.3 3.8-5.7 5.7-9.5 1.9-3.8.9-7.1-.4-10-1.4-2.9-12.8-30.9-17.5-42.3-4.6-11.1-9.2-9.6-12.8-9.8-3.3-.2-7.1-.2-10.9-.2-3.8 0-10 1.4-15.2 7.1-5.2 5.7-20 19.5-20 47.1s20.4 54.3 23.3 58.1c2.9 3.8 39.6 60.5 95.9 84.9 13.4 5.8 23.9 9.2 32 11.8 13.5 4.3 25.8 3.7 35.5 2.2 10.9-1.6 33.9-13.8 38.6-27.1 4.7-13.3 4.7-24.8 3.3-27.1-1.4-2.4-5.2-3.8-10.9-6.7z"/></svg>
+                    Join Channel & Buka Akses
+                </a>
+
+                <p class="privacy-note">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                    Aman & gratis. Tidak ada data yang disimpan.
+                </p>
+            </div>
+
+            <!-- WORKSPACE -->
+            <div id="workspace">
+                <!-- Feature tags -->
+                <div class="feature-tags">
+                    <div class="feat-tag">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 12H9V9h2v6zm4 0h-2V9h2v6z"/></svg>
+                        Resolusi HD
+                    </div>
+                    <div class="feat-tag">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                        Proses Otomatis
+                    </div>
+                    <div class="feat-tag">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.06 15.94 0 13.36 0c-1.3 0-2.48.52-3.34 1.36L9 2.4 7.98 1.36C7.12.52 5.94 0 4.64 0 2.06 0 0 2.06 0 4.64c0 .48.11.92.18 1.36H0v2h20V6zm-9.5 14L4 14.5H8l1-7 3.5 5L15 9l1 5.5h4L13.5 20H10.5z"/></svg>
+                        Kualitas Terbaik
+                    </div>
+                </div>
+
+                <!-- Upload Zone -->
+                <label class="upload-zone" id="drop-zone">
+                    <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp">
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                    </div>
+                    <div class="upload-title">Klik atau Seret Foto ke Sini</div>
+                    <div class="upload-sub">Pilih foto yang ingin diperjelas</div>
+                    <div class="upload-formats">
+                        <span class="fmt-badge">JPG</span>
+                        <span class="fmt-badge">PNG</span>
+                        <span class="fmt-badge">WEBP</span>
+                    </div>
+                </label>
+
+                <!-- Preview strip -->
+                <div class="preview-strip" id="preview-strip">
+                    <img class="preview-thumb" id="preview-thumb" src="" alt="preview">
+                    <div class="preview-info">
+                        <div class="preview-name" id="preview-name"></div>
+                        <div class="preview-size" id="preview-size"></div>
+                    </div>
+                    <div class="preview-chg" onclick="document.getElementById('file-input').click()">Ganti Foto</div>
+                </div>
+
+                <!-- Process btn -->
+                <button class="process-btn" id="process-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    Perjelas Foto Sekarang
+                </button>
+
+                <!-- Cooldown -->
+                <div class="cooldown-bar" id="cooldown-bar">
+                    <div class="cooldown-top">
+                        <div class="cooldown-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+                            Bisa proses lagi dalam
+                        </div>
+                        <div class="cooldown-timer" id="timer">03:00</div>
+                    </div>
+                    <div class="cooldown-track">
+                        <div class="cooldown-fill" id="cooldown-fill" style="width:100%"></div>
+                    </div>
+                </div>
+
+                <!-- Loader -->
+                <div class="loader-wrap" id="loader">
+                    <div class="loader-spinner"></div>
+                    <div class="loader-text">Sedang Memproses Foto</div>
+                    <div class="loader-sub">Harap tunggu sebentar ya...</div>
+                    <div class="loader-dots" style="margin-top:8px">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+
+                <!-- Result -->
+                <div class="result-box" id="result-box">
+                    <div class="result-head">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        <span>Foto berhasil diperjelas! 🎉</span>
+                    </div>
+                    <div class="result-img-wrap">
+                        <img id="result-img" src="" alt="Hasil Enhanced">
+                    </div>
+                    <a href="" id="download-btn" class="download-btn" target="_blank" download="HD_Vision_Result.jpg">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Download Foto HD
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="how-section">
+        <div class="section-title">Cara Kerjanya</div>
+        <div class="how-grid">
+            <div class="how-card">
+                <div class="how-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                </div>
+                <div class="how-title">Upload Foto</div>
+                <div class="how-desc">Pilih foto buram dari galerimu</div>
+            </div>
+            <div class="how-card">
+                <div class="how-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+                </div>
+                <div class="how-title">Proses Otomatis</div>
+                <div class="how-desc">Sistem kami menganalisis dan memperjelas</div>
+            </div>
+            <div class="how-card">
+                <div class="how-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                </div>
+                <div class="how-title">Download</div>
+                <div class="how-desc">Simpan foto HD langsung ke perangkatmu</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRUST / TESTIMONIAL -->
+    <div class="trust-section">
+        <div class="trust-row">
+            <div class="trust-avatar" style="background:linear-gradient(135deg,#60a5fa,#818cf8)">A</div>
+            <div class="trust-body">
+                <div class="stars">★★★★★</div>
+                <div class="trust-name">Andi R.</div>
+                <div class="trust-quote">Foto lama keluargaku yang buram banget jadi kelihatan jelas lagi. Keren banget!</div>
+            </div>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-row">
+            <div class="trust-avatar" style="background:linear-gradient(135deg,#34d399,#22c55e)">S</div>
+            <div class="trust-body">
+                <div class="stars">★★★★★</div>
+                <div class="trust-name">Siti M.</div>
+                <div class="trust-quote">Screenshot chat yang blur sekarang bisa kebaca semua. Recommended banget!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div>© 2025 HD Vision — Semua hak dilindungi</div>
+        <div class="footer-pills">
+            <div class="footer-pill">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                Privasi Terjaga
+            </div>
+            <div class="footer-pill">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                Cepat & Mudah
+            </div>
+            <div class="footer-pill">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm3.3 14.71L11 12.41V7h2v4.59l3.71 3.71-1.42 1.41z"/></svg>
+                Gratis Selamanya
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+    const lockScreen  = document.getElementById('lock-screen');
+    const workspace   = document.getElementById('workspace');
+    const verifyBtn   = document.getElementById('verify-btn');
+    const fileInput   = document.getElementById('file-input');
+    const dropZone    = document.getElementById('drop-zone');
+    const previewStrip= document.getElementById('preview-strip');
+    const previewThumb= document.getElementById('preview-thumb');
+    const previewName = document.getElementById('preview-name');
+    const previewSize = document.getElementById('preview-size');
+    const processBtn  = document.getElementById('process-btn');
+    const loaderWrap  = document.getElementById('loader');
+    const resultBox   = document.getElementById('result-box');
+    const resultImg   = document.getElementById('result-img');
+    const downloadBtn = document.getElementById('download-btn');
+    const cooldownBar = document.getElementById('cooldown-bar');
+    const timerDisp   = document.getElementById('timer');
+    const cooldownFill= document.getElementById('cooldown-fill');
+    const toast       = document.getElementById('toast');
+
+    const COOLDOWN_MS = 3 * 60 * 1000;
+    let base64Image = null;
+    let cooldownInterval = null;
+
+    // TOAST
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // GATE CHECK
+    function checkGate() {
+        if (localStorage.getItem('channel_verified') === 'true') {
             lockScreen.style.display = 'none';
             workspace.style.display = 'block';
         }
+    }
 
-        verifyBtn.addEventListener('click', () => {
-            localStorage.setItem('verified', 'true');
-        });
+    verifyBtn.addEventListener('click', () => {
+        localStorage.setItem('channel_verified', 'true');
+        setTimeout(() => {
+            checkGate();
+            showToast('✅ Akses berhasil dibuka!');
+        }, 1500);
+    });
 
-        // Cooldown Logic (3 Menit)
-        const COOLDOWN = 3 * 60 * 1000;
-        function checkCooldown() {
-            const last = localStorage.getItem('last_time');
-            if (!last) return 0;
-            const diff = Date.now() - parseInt(last);
-            return diff < COOLDOWN ? COOLDOWN - diff : 0;
-        }
+    // COOLDOWN
+    function getCooldownRemaining() {
+        const last = localStorage.getItem('last_process_time');
+        if (!last) return 0;
+        const passed = Date.now() - parseInt(last);
+        return passed < COOLDOWN_MS ? COOLDOWN_MS - passed : 0;
+    }
 
-        function updateTimer() {
-            let left = checkCooldown();
-            if (left > 0) {
-                processBtn.disabled = true;
-                cooldownAlert.style.display = 'block';
-                const m = Math.floor(left / 60000);
-                const s = Math.floor((left % 60000) / 1000);
-                timerDisplay.innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                setTimeout(updateTimer, 1000);
-            } else {
-                cooldownAlert.style.display = 'none';
-                if(fileInput.files.length > 0) processBtn.disabled = false;
+    function startCooldownUI(initialRemaining) {
+        if (cooldownInterval) clearInterval(cooldownInterval);
+        cooldownBar.style.display = 'block';
+        processBtn.disabled = true;
+
+        function tick() {
+            const left = getCooldownRemaining();
+            if (left <= 0) {
+                clearInterval(cooldownInterval);
+                cooldownBar.style.display = 'none';
+                cooldownFill.style.width = '0%';
+                if (base64Image) processBtn.disabled = false;
+                return;
             }
+            const m = Math.floor(left / 60000);
+            const s = Math.floor((left % 60000) / 1000);
+            timerDisp.textContent = `0${m}:${s < 10 ? '0' : ''}${s}`;
+            cooldownFill.style.width = ((left / COOLDOWN_MS) * 100) + '%';
         }
-        updateTimer();
+        tick();
+        cooldownInterval = setInterval(tick, 1000);
+    }
 
-        // Upload Logic
-        fileInput.addEventListener('change', e => {
-            if(e.target.files[0]) {
-                fileName.innerText = e.target.files[0].name;
-                if (checkCooldown() === 0) processBtn.disabled = false;
-            }
-        });
-
-        document.getElementById('drop-zone').onclick = () => fileInput.click();
-
-        processBtn.onclick = async () => {
-            if(checkCooldown() > 0) return;
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = async e => {
-                processBtn.disabled = true;
-                loader.style.display = 'block';
-                try {
-                    const res = await fetch('/api/enhance', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ image: e.target.result })
-                    });
-                    const data = await res.json();
-                    if(data.Status) {
-                        document.getElementById('result-img').src = data.Result_url;
-                        document.getElementById('download-btn').href = data.Result_url;
-                        resultBox.style.display = 'block';
-                        localStorage.setItem('last_time', Date.now());
-                        updateTimer();
-                    } else {
-                        alert("Gagal memproses, coba lagi.");
-                        processBtn.disabled = false;
-                    }
-                } catch(err) {
-                    alert("Error connection.");
-                    processBtn.disabled = false;
-                }
-                loader.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
+    // FILE LOAD
+    function handleFile(file) {
+        if (!file || !file.type.startsWith('image/')) {
+            showToast('⚠️ Hanya file gambar yang didukung');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+            base64Image = e.target.result;
+            // preview
+            previewThumb.src = base64Image;
+            previewName.textContent = file.name;
+            const kb = (file.size / 1024).toFixed(1);
+            previewSize.textContent = kb > 1024 ? (kb/1024).toFixed(1) + ' MB' : kb + ' KB';
+            previewStrip.style.display = 'flex';
+            dropZone.style.display = 'none';
+            if (!getCooldownRemaining()) processBtn.disabled = false;
         };
-    </script>
+        reader.readAsDataURL(file);
+    }
+
+    fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+    // Drag & drop
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        handleFile(e.dataTransfer.files[0]);
+    });
+
+    // PROCESS
+    processBtn.addEventListener('click', async () => {
+        if (!base64Image || getCooldownRemaining()) return;
+
+        processBtn.disabled = true;
+        loaderWrap.style.display = 'block';
+        resultBox.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/enhance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: base64Image })
+            });
+            const data = await res.json();
+
+            if (data.Status && data.Result_url) {
+                resultImg.src = data.Result_url;
+                downloadBtn.href = data.Result_url;
+                resultBox.style.display = 'block';
+                localStorage.setItem('last_process_time', Date.now());
+                startCooldownUI(COOLDOWN_MS);
+                showToast('🎉 Foto berhasil diperjelas!');
+                resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                showToast('❌ ' + (data.Error || 'Gagal memproses gambar.'));
+                if (!getCooldownRemaining()) processBtn.disabled = false;
+            }
+        } catch {
+            showToast('❌ Gagal terhubung ke server. Coba lagi ya!');
+            if (!getCooldownRemaining()) processBtn.disabled = false;
+        } finally {
+            loaderWrap.style.display = 'none';
+        }
+    });
+
+    // INIT
+    checkGate();
+    const rem = getCooldownRemaining();
+    if (rem > 0) startCooldownUI(rem);
+</script>
 </body>
 </html>
