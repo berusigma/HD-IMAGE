@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ],
+  "functions": {
+    "api/enhance.js": {
+      "memory": 1024,
+      "maxDuration": 15
+    }
+  }
+}
